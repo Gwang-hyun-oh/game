@@ -1,0 +1,246 @@
+@charset "utf-8";
+
+/* 기본 리셋 및 폰트 설정 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Manrope', sans-serif;
+  background-color: #f1f3f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+/* 아이패드 기준 고정 비율 해상도 (768px * 1024px) 게임 컨테이너 */
+.game-container {
+  position: relative; /* 피드백 오버레이 정렬의 기준점 */
+  width: 100%;
+  max-width: 768px;
+  height: 1024px;
+  max-height: 95vh; /* 화면 높이가 작은 태블릿에서도 하단이 잘리지 않도록 안전장치 추가 */
+  padding: 60px 48px; /* 내부 여백을 소폭 줄여 아이패드 화면 내 밸런스 유지 */
+  background: #F8F9FA;
+  border-radius: 48px;
+  box-shadow: 0px 24px 64px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* 화면 전환용 유틸리티 클래스 */
+.hidden {
+  display: none !important;
+}
+
+/* 상단 타이틀 영역 */
+.header-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: 100%;
+}
+.badge {
+  padding: 12px 32px;
+  background: #EBF5FF;
+  border-radius: 100px;
+  color: #5856D6;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+.main-title {
+  text-align: center;
+  color: #1C1C1E;
+  font-size: 52px; /* 아이패드 768px 안에서 텍스트 줄바꿈이 예쁘게 떨어지도록 조절 */
+  font-weight: 800;
+  line-height: 1.25;
+}
+.sub-title {
+  text-align: center;
+  color: #8E8E93;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* 중앙 카드 및 사과 오브젝트 */
+.card-view {
+  width: 100%;
+  max-width: 520px;
+  height: 480px; /* 사과 스케일 증가에 맞춰 카드 높이를 충분히 확보 */
+  background: white;
+  box-shadow: 0px 16px 40px rgba(0, 0, 0, 0.03);
+  border-radius: 56px;
+  border: 2.5px solid #E9ECEF;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.card-view img {
+  width: 200px; /* 이미지 카드 가독성 확장 */
+  height: auto;
+  object-fit: contain;
+}
+
+#object-name {
+  font-size: 26px; /* 태블릿 환경에 맞춰 가독성 상향 */
+  font-weight: bold;
+  color: #475569;
+  background: #ffffff;
+  padding: 8px 32px;
+  display: block;
+  margin-top: 24px;
+  border-radius: 16px; /* 텍스트 배경 라운드 처리로 완성도 향상 */
+  padding-top:5px;
+}
+
+/* 사과 그래픽 캔버스 */
+.apple-canvas {
+  width: 320px;
+  height: 320px;
+  position: relative;
+  transform: scale(1.15); /* 크기 오버플로우 방지를 위해 스케일 밸런스 조정 */
+}
+.apple-leaf {
+  width: 45px;
+  height: 25px;
+  left: 110px;
+  top: 10px;
+  position: absolute;
+  transform: rotate(30deg);
+  transform-origin: top left;
+  border-radius: 9999px;
+}
+.apple-branch {
+  width: 8px;
+  height: 35px;
+  left: 116px;
+  top: 25px;
+  position: absolute;
+  background: #8B5A2B;
+  border-radius: 4px;
+}
+.apple-body-left, .apple-body-right {
+  width: 130px;
+  height: 140px;
+  top: 50px;
+  position: absolute;
+  border-radius: 9999px;
+}
+.apple-body-left { left: 40px; }
+.apple-body-right { left: 90px; }
+
+.apple-gloss {
+  width: 30px;
+  height: 30px;
+  left: 70px;
+  top: 70px;
+  position: absolute;
+  opacity: 0.3;
+  background: white;
+  border-radius: 9999px;
+}
+
+/* 컬러링 상태 클래스 */
+.color-origin .apple-leaf { background: #4CD964; }
+.color-origin .apple-body-left, 
+.color-origin .apple-body-right { background: #FF4B4B; }
+
+.color-quiz .apple-leaf { background: #9CA3AF; }
+.color-quiz .apple-body-left, 
+.color-quiz .apple-body-right { background: #D1D5DB; }
+
+/* 하단 버튼 및 인터랙션 */
+.cta-button {
+  width: 100%;
+  max-width: 440px;
+  padding: 24px;
+  background: #5856D6;
+  box-shadow: 0px 12px 32px rgba(88, 86, 214, 0.3);
+  border-radius: 36px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0px 16px 40px rgba(88, 86, 214, 0.4);
+}
+.cta-text {
+  color: white;
+  font-size: 28px;
+  font-weight: 800;
+}
+
+/* 컬러 픽커 정렬 구조 */
+.color-picker-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 32px; /* 아이패드 가로폭을 고려해 간격 넓힘 */
+  width: 100%;
+}
+.color-chip {
+  width: 130px;
+  height: 130px;
+  border: 8px solid white;
+  box-shadow: 0px 12px 28px rgba(0, 0, 0, 0.08);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 18px; /* 텍스트 폰트 크기 상향 */
+  font-weight: bold;
+}
+.color-chip:hover {
+  transform: scale(1.08);
+}
+.chip-red { background: #FF4B4B; color: white; }
+.chip-yellow { background: #FFCA28; color: #1C1C1E; }
+.chip-green { background: #4CD964; color: white; }
+
+/* 피드백 레이어 가시성 조절 */
+#feedback-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  width: 280px;
+  height: 280px;
+  pointer-events: none;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 정오답 노출 시 애니메이션 효과 */
+}
+#feedback-overlay.active {
+  transform: translate(-50%, -50%) scale(1);
+}
+#feedback-overlay svg {
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 12px 24px rgba(0,0,0,0.15));
+}
+
+
+        /* 🎬 시작 화면 전용 프리뷰 사물 카드 디자인 */
+        
+        .card-view-start img {
+            width:240px;
+            filter: drop-shadow(0 8px 12px rgba(0,0,0,0.05));
+        }

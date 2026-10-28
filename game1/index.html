@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>소리 듣고 사물 고르기 게임 - 반응형 원페이지</title>
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/gsap-business-green/minified/gsap.min.js"></script>
+  <script src="/js/lottie.min.js"></script>
+  
+  <style>
+    /* 📌 1. 전체 화면 스크롤 절대 발생 방지 초기화 */
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #f7f9fc;
+      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    /* 📌 2. 어떤 해상도에서도 화면 정중앙에 배치 */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 📌 3. 가로/세로 비율에 유연하게 대응하면서 기존 최대 크기 보존 */
+    #game-container {
+      width: 100vw;
+      height: 100vh;
+      max-width: 1024px;
+      max-height: 768px;
+      background-color: #ffffff;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 2.5vh 2vw; /* 기기 높낮이에 맞춘 동적 안쪽 여백 */
+      overflow: hidden;
+    }
+
+    /* 기기 화면이 max 크기보다 커질 때 이쁘게 보이도록 모서리 및 그림자 처리 */
+    @media (min-width: 1025px) and (min-height: 769px) {
+      #game-container {
+        border-radius: 32px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      }
+    }
+
+    /* 상단 로비 뒤로가기 버튼 */
+    #back-btn {
+      position: absolute;
+      top: 2.5vh;
+      left: 2vw;
+      padding: 8px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #ffffff;
+      border: 3px solid #e8eaed;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #5f6368;
+      z-index: 15;
+    }
+
+    /* 📌 4. 상단 질문 영역 (세로 비율 최적화 계산 조정) */
+    #question-area {
+      flex: 0 0 32vh; /* 기기 화면 세로 길이에 비례 */
+      max-height: 240px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f4f8;
+      border-radius: 24px;
+      margin-bottom: 2vh;
+      padding: 10px;
+      width: 100%;
+    }
+    #target-word {
+      font-size: clamp(40px, 8vh, 65px); /* 화면 크기에 맞추어 폰트 크기 자동 조절 */
+      font-weight: bold;
+      color: #307FF0;
+      line-height: 1.2;
+    }
+    #question-text {
+      font-size: clamp(18px, 3.5vh, 26px);
+      color: #5f6368;
+      margin-top: 1vh;
+      font-weight: 600;
+    }
+
+    /* 📌 5. 하단 3지선다 영역 (나머지 화면 공간을 가득 채우도록 배정) */
+    #choices-area {
+      flex: 1; 
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      gap: 2vw;
+      width: 100%;
+      min-height: 0; /* flex 자식 스크롤 꼬임 방지 버그 패치 */
+    }
+    .choice-card {
+      flex: 1;
+      height: 90%; /* 위아래 꽉 채우기 */
+      background: #ffffff;
+      border: 4px solid #e8eaed;
+      border-radius: 28px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.04);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* 카드 내 로띠 플레이어가 찌그러지지 않고 꽉 차게 */
+    .lottie-box {
+      width: 90%;
+      height: 90%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 피드백 마커 레이어 */
+    #feedback-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .marker-box {
+      width: min(200px, 25vw);
+      height: min(200px, 25vw);
+      opacity: 0;
+      transform: scale(0);
+      display: none;
+    }
+    .marker-box svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 🎮 게임 시작 첫 화면 전체 커버 레이어 */
+    #start-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle, #f0f7ff 0%, #dbeeff 100%);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      text-align: center;
+    }
+    #start-title {
+      font-size: clamp(35px, 7vh, 55px);
+      font-weight: bold;
+      color: #307FF0;
+      margin-bottom: 1vh;
+    }
+    #start-subtitle {
+      font-size: clamp(16px, 3vh, 24px);
+      color: #5f6368;
+      font-weight: 600;
+      margin-bottom: 5vh;
+    }
+    #start-play-btn {
+      width: clamp(120px, 20vh, 180px);
+      height: clamp(120px, 20vh, 180px);
+      background-color: #307FF0;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 15px 30px rgba(48, 127, 240, 0.4);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    #start-play-btn svg {
+      width: 45%;
+      height: 45%;
+      fill: #ffffff;
+      margin-left: 8%;
+    }
+
+    /* 🎉 게임 종료 결과창 레이어 */
+    #game-over-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.96);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      display: none;
+      padding: 20px;
+    }
+    #ending-lottie-container {
+      width: clamp(200px, 35vh, 320px);
+      height: clamp(200px, 35vh, 320px);
+    }
+    #game-over-screen h2 {
+      font-size: clamp(32px, 6vh, 52px);
+      color: #307FF0;
+      margin: 1vh 0;
+      font-weight: bold;
+    }
+    #game-over-screen p {
+      font-size: clamp(16px, 3vh, 26px);
+      color: #5f6368;
+      margin-bottom: 4vh;
+      font-weight: 600;
+    }
+    #restart-btn {
+      padding: 15px 40px;
+      font-size: clamp(18px, 3vh, 26px);
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #307FF0;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      box-shadow: 0 10px 20px rgba(48, 127, 240, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="game-container">
+    <button id="back-btn" onclick="location.href='../index.html'">◀ 처음으로</button>
+
+    <!-- 게임 인트로 커버 -->
+    <div id="start-screen">
+      <h1 id="start-title">사물 맞추기 놀이</h1>
+      <div id="start-subtitle">소리를 듣고 알맞은 그림을 골라보세요!</div>
+      <button id="start-play-btn">
+        <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+    </div>
+
+    <!-- 플레이 판넬 -->
+    <div id="question-area">
+      <h1 id="target-word">-</h1>
+      <span id="question-text">어디에 있을까?</span>
+    </div>
+    <div id="choices-area"></div>
+
+    <!-- 그래픽 마커 레이어 -->
+    <div id="feedback-layer">
+      <div id="correct-svg-box" class="marker-box"></div>
+      <div id="wrong-svg-box" class="marker-box"></div>
+    </div>
+
+    <!-- 라운드 종료 스크린 -->
+    <div id="game-over-screen">
+      <div id="ending-lottie-container"></div>
+      <h2>정말 멋져요!</h2>
+      <p>모든 문제를 다 맞췄어요!</p>
+      <button id="restart-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        다시 하기
+      </button>
+    </div>
+  </div>
+
+  <script type="module" src="game1.js"></script>
+</body>
+</html>

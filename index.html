@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>반짝반짝 학습지 놀이방 - 최종 로비</title>
+  <!-- 핵심 애니메이션 인프라 (GSAP 및 Lottie 웹 플레이어) -->
+  <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/gsap-business-green/minified/gsap.min.js"></script>
+  <script src="/js/lottie.min.js"></script>
+  
+  <style>
+    /* 📌 1. 전체 화면 스크롤 완전 차단 및 배경 세팅 */
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(135deg, #f0f7ff 0%, #e6f2ff 100%);
+      font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* 📌 2. 반응형 원페이지 컨테이너 (1024x768 연동 스펙) */
+    #lobby-container {
+      width: 100vw;
+      height: 100vh;
+      max-width: 1024px;
+      max-height: 768px;
+      display: flex;
+      flex-direction: column;
+      padding: 5vh 4vw; /* 상단 헤더 복구에 맞춰 상하 여백 정렬 */
+      position: relative;
+    }
+
+    @media (min-width: 1025px) and (min-height: 769px) {
+      #lobby-container {
+        background-color: #ffffff;
+        border-radius: 40px;
+        box-shadow: 0 30px 60px rgba(0, 91, 234, 0.06);
+      }
+    }
+
+    /* 📌 3. [복구] 상단 타이틀 안내 웰컴보드 구역 */
+    #lobby-header {
+      text-align: center;
+      margin-bottom: 4vh;
+    }
+    #lobby-title {
+      font-size: clamp(32px, 6vh, 50px);
+      font-weight: bold;
+      color: #307FF0;
+      letter-spacing: -1px;
+    }
+    #lobby-subtitle {
+      font-size: clamp(16px, 2.5vh, 22px);
+      color: #7a8b9e;
+      font-weight: 600;
+      margin-top: 1vh;
+    }
+
+    /* 📌 4. 미래 확장형 게임 선택 메뉴판 그리드 */
+    #game-menu-grid {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 3.5vw;
+      width: 100%;
+      min-height: 0; 
+    }
+
+    /* 📌 5. 카드 디자인 고도화 (유아 전용 둥글둥글한 라운딩 처리) */
+    .game-card {
+      flex: 1;
+      max-width: 260px;
+      height: clamp(230px, 42vh, 320px); 
+      background-color: #ffffff;
+      border: 6px solid #e8eaed;
+      border-radius: 45px; 
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      padding: 20px 15px;
+      text-align: center;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 테마 카드별 파스텔 컬러 경계선 */
+    .game-card.game1-theme { border-color: #307FF0; }
+    .game-card.game2-theme { border-color: #34A853; }
+    .game-card.game3-theme { border-color: #FF9F0A; } 
+    .game-card.ready-theme { border-color: #b0b7c0; background-color: #f5f7f9; }
+
+    /* 📌 6. 카드 내부 Lottie 전용 컨테이너 박스 */
+    .card-lottie-box {
+      width: 90%;
+      height: 55%; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 2.5vh;
+      pointer-events: none;
+    }
+
+    /* 하단 한글 단어 가이드 */
+    .card-name {
+      font-size: clamp(18px, 3.2vh, 25px);
+      font-weight: bold;
+      color: #3c4043;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.5vh;
+    }
+    .card-desc {
+      font-size: clamp(13px, 2vh, 15px);
+      color: #80868b;
+      font-weight: 600;
+    }
+    .ready-theme .card-name, .ready-theme .card-desc {
+      color: #9aa0a6;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="lobby-container">
+    
+    <!-- 📌 복구 완료: 부모님을 위한 상단 전광판 가이드 -->
+    <header id="lobby-header">
+      <h1 id="lobby-title">반짝반짝 놀이방</h1>
+      <p id="lobby-subtitle">하고 싶은 놀이 카드를 꾹 눌러보세요!</p>
+    </header>
+
+    <!-- 중앙 카드 선택 메뉴 구역 -->
+    <main id="game-menu-grid">
+      
+      <!-- 📌 1번 게임방: 사물 맞추기 놀이 카드 -->
+      <a href="./game1/index.html" class="game-card game1-theme">
+        <div id="lobby-lottie-game1" class="card-lottie-box"></div>
+        <div class="card-name">사물 맞추기</div>
+        <div class="card-desc">똑똑 누르기 놀이</div>
+      </a>
+
+      <!-- 📌 2번 게임방: 선 긋기 연결 놀이 카드 -->
+      <a href="javascript:void(0)" class="game-card ready-theme game2-theme">
+        <div id="lobby-lottie-game2" class="card-lottie-box"></div>
+        <div class="card-name">선 긋기 놀이</div>
+        <div class="card-desc">줄을 쭉쭉 그어요</div>
+      </a>
+
+      <!-- 📌 3번 게임방: 추가 확장 슬롯 예비 카드 -->
+      <a href="javascript:void(0)" class="game-card ready-theme game3-theme">
+        <div id="lobby-lottie-game3" class="card-lottie-box"></div>
+        <div class="card-name">재미있는 놀이</div>
+        <div class="card-desc">곧 열려요!</div>
+      </a>
+
+    </main>
+  </div>
+
+  <script>
+    // 🎮 [3대 로띠 독립 엔진 동시 가동] 
+    
+    // 1번 카드 로띠 엔진 (물음표/돋보기 모션 파일 이름 매핑)
+    lottie.loadAnimation({
+      container: document.getElementById("lobby-lottie-game1"),
+      renderer: 'svg', loop: true, autoplay: true,
+      path: "./assets/lottie/lobby_menu1.json",
+      error: function() {
+        // 실제 로컬 파일 배치 전 작동할 예비 온라인 임시 링크 주소
+        lottie.loadAnimation({ container: document.getElementById("lobby-lottie-game1"), renderer: 'svg', loop: true, autoplay: true, path: "https://lottiefiles.com" });
+      }
+    });
+
+    // 2번 카드 로띠 엔진 (선 긋기 연출용 드래그/손가락 연동 모션 파일 이름 매핑)
+    lottie.loadAnimation({
+      container: document.getElementById("lobby-lottie-game2"),
+      renderer: 'svg', loop: true, autoplay: true,
+      path: "./assets/lottie/lobby_menu2.json",
+      error: function() {
+        lottie.loadAnimation({ container: document.getElementById("lobby-lottie-game2"), renderer: 'svg', loop: true, autoplay: true, path: "https://lottiefiles.com" });
+      }
+    });
+
+    // 3번 카드 로띠 엔진 (준비중인 비밀 상자/반짝이 모션 파일 이름 매핑)
+    lottie.loadAnimation({
+      container: document.getElementById("lobby-lottie-game3"),
+      renderer: 'svg', loop: true, autoplay: true,
+      path: "./assets/lottie/lobby_menu3.json",
+      error: function() {
+        lottie.loadAnimation({ container: document.getElementById("lobby-lottie-game3"), renderer: 'svg', loop: true, autoplay: true, path: "https://lottiefiles.com" });
+      }
+    });
+
+    // 화면 진입 시 헤더와 카드들이 바닥에서 차례대로 퉁퉁 튀어 올라오는 부드러운 스태거 연출 (GSAP)
+    window.addEventListener('DOMContentLoaded', () => {
+      gsap.fromTo("#lobby-header", { y: -25, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" });
+      gsap.fromTo(".game-card", 
+        { y: 60, opacity: 0, scale: 0.9 }, 
+        { y: 0, opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.4)", stagger: 0.1, delay: 0.15 }
+      );
+      
+      // 손가락 터치나 마우스 진입 시 카드가 통통 반응형 피드백을 주는 탄성 모션 인터랙션 가이드
+      document.querySelectorAll('.game-card').forEach(card => {
+        card.addEventListener('mouseenter', () => {
+          gsap.to(card, { scale: 1.04, boxShadow: "0 22px 40px rgba(0,91,234,0.08)", duration: 0.2 });
+        });
+        card.addEventListener('mouseleave', () => {
+          gsap.to(card, { scale: 1, boxShadow: "0 15px 35px rgba(0,0,0,0.04)", duration: 0.2 });
+        });
+      });
+    });
+  </script>
+</body>
+</html>
