@@ -1,20 +1,6 @@
 // 색상 매칭 게임 전용 Stage 풀 (총 5개 카테고리 고도화 버전)
 const gameStagePool = [
-  {
-        theme: "color-sea",
-        title: "출렁출렁 바다 친구들 색상 맞추기",
-        description: "귀여운 바다 생물들과 어울리는 색을 찾아 연결해 볼까요?",
-        leftSide: [
-            { id: "L1", matchId: "NAVY", label: "고래", lottie: "whale.json", lottie_black: "whale_black.json" },
-            { id: "L2", matchId: "CORAL", label: "불가사리", lottie: "starfish.json", lottie_black: "starfish_black.json" },
-            { id: "L3", matchId: "EMERALD", label: "거북이", lottie: "turtle.json", lottie_black: "turtle_black.json" }
-        ],
-        rightSide: [
-            { id: "R1", matchId: "CORAL", label: "산호색", color: "#fb7185" },
-            { id: "R2", matchId: "EMERALD", label: "청록색", color: "#0d9488" },
-            { id: "R3", matchId: "NAVY", label: "남색", color: "#1e3a8a" }
-        ]
-    },
+
     {
         theme: "color-vehicles",
         title: "부릉부릉 탈것 색상 맞추기",
@@ -45,5 +31,19 @@ const gameStagePool = [
             { id: "R3", matchId: "GREEN", label: "초록", color: "#22c55e" }
         ]
     },
-
+  {
+        theme: "color-sea",
+        title: "출렁출렁 바다 친구들 색상 맞추기",
+        description: "귀여운 바다 생물들과 어울리는 색을 찾아 연결해 볼까요?",
+        leftSide: [
+            { id: "L1", matchId: "NAVY", label: "고래", lottie: "whale.json", lottie_black: "whale_black.json" },
+            { id: "L2", matchId: "CORAL", label: "불가사리", lottie: "starfish.json", lottie_black: "starfish_black.json" },
+            { id: "L3", matchId: "EMERALD", label: "거북이", lottie: "turtle.json", lottie_black: "turtle_black.json" }
+        ],
+        rightSide: [
+            { id: "R1", matchId: "CORAL", label: "산호색", color: "#fb7185" },
+            { id: "R2", matchId: "EMERALD", label: "청록색", color: "#0d9488" },
+            { id: "R3", matchId: "NAVY", label: "남색", color: "#1e3a8a" }
+        ]
+    },
 ];
