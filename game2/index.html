@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <title>색상 연결 매칭 게임</title>
+    
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+        
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            background-color: #1e293b; 
+            overflow: hidden;
+            position: fixed; 
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+            touch-action: none; 
+        }
+
+        .app-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1024px;  
+            max-height: 768px;  
+            background-color: #f0f4f8; 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 12px; 
+            overflow: hidden;
+        }
+
+        header {
+            margin-top: 40px;
+            text-align: center;
+            z-index: 10;
+        }
+        h1 {
+            font-size: 1.8rem;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+        
+        .game-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 160px; 
+            touch-action: none;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px; 
+            z-index: 5;
+        }
+        .item {
+            width: 170px; 
+            height: 170px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+            font-weight: bold;
+            color: #334155;
+            border: 5px solid #e2e8f0;
+            transition: transform 0.15s, border-color 0.15s;
+            touch-action: none;
+            overflow: hidden; 
+        }
+        .item:active {
+            transform: scale(0.95);
+        }
+        .item.connected {
+            pointer-events: none;
+        }
+        .item.color-node {
+            color: #fff;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.25);
+            font-size: 1.5rem;
+        }
+        .lottie-view {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none; 
+        }
+        .lottie-view svg {
+            width: 90% !important;
+            height: 90% !important;
+            object-fit: contain;
+        }
+        
+        svg.line-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+        .game-line {
+            stroke-linecap: round;
+        }
+        .game-line.drawing {
+            stroke: #64748b !important;
+            stroke-width: 7 !important;
+        }
+        .game-line.success {
+            stroke-width: 7 !important;
+            filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.1)); 
+        }
+
+        .wrong-marker {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px; 
+            height: 120px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(239, 68, 68, 0.45);
+            pointer-events: none;
+            z-index: 90;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+        }
+        .wrong-marker::before, .wrong-marker::after {
+            content: '';
+            position: absolute;
+            width: 60px;
+            height: 12px;
+            background-color: #ffffff;
+            border-radius: 6px;
+        }
+        .wrong-marker::before { transform: rotate(45deg); }
+        .wrong-marker::after { transform: rotate(-45deg); }
+
+        /* ⭕ [시작 화면] 게임 대기 인트로 레이어 CSS 가이드 */
+        .intro-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #e2e8f0;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .intro-title {
+            font-size: 2.6rem;
+            color: #1e293b;
+            margin-bottom: 12px;
+            font-weight: 800;
+        }
+        .intro-desc {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 40px;
+        }
+        .start-btn {
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            border-radius: 40px;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.35);
+            transition: background-color 0.2s, transform 0.1s;
+        }
+        .start-btn:active {
+            background-color: #2563eb;
+            transform: scale(0.97);
+        }
+
+        /* 성공 모달 */
+        .modal-overlay {
+            position: absolute; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+        }
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            width: 80%;
+            max-width: 340px;
+            transform: scale(0.9);
+            animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popIn {
+            to { transform: scale(1); }
+        }
+        .modal-content h2 {
+            color: #10b981;
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+        .modal-content p {
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 1rem;
+        }
+        .modal-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transition: background-color 0.2s;
+        }
+        .modal-btn:active {
+            background-color: #059669;
+        }
+    </style>
+
+    <script src="/js/jquery-3.3.1.min.js"></script>
+  <script src="/js/gsap-business-green/minified/gsap.min.js"></script>
+  <script src="/js/lottie.min.js"></script>
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- ⭕ [시작 화면 인트로 가이드] 처음 접속 시 활성화되는 레이어 -->
+        <div class="intro-overlay" id="intro-screen">
+            <h2 class="intro-title">알록달록 색상 매칭</h2>
+            <p class="intro-desc">사물에 알맞은 이쁜 색상들을 선으로 짝지어 주세요!</p>
+            <button class="start-btn" id="start-btn">게임 시작</button>
+        </div>
+
+        <header>
+            <h1 id="game-title">색상 맞추기</h1>
+            <p id="game-desc" style="color: #64748b; font-size: 0.95rem;">연결해 보세요!</p>
+        </header>
+
+        <div class="game-container" id="game-zone">
+            <svg class="line-layer" id="svg-layer"></svg>
+            <div class="column" id="left-column"></div>
+            <div class="column" id="right-column"></div>
+            
+            <div class="wrong-marker" id="fail-marker"></div>
+        </div>
+
+        <div class="modal-overlay" id="success-modal">
+            <div class="modal-content">
+                <h2>참 잘했어요! 🎉</h2>
+                <p>모든 색상을 완벽하게 매칭했습니다.</p>
+                <button class="modal-btn" id="next-btn">다음 색상 맞추기</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./data.js"></script>
+    <script src="./main.js"></script>
+</body>
+</html>
