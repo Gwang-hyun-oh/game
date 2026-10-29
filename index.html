@@ -146,7 +146,7 @@
     
     <!-- 📌 복구 완료: 부모님을 위한 상단 전광판 가이드 -->
     <header id="lobby-header">
-      <h1 id="lobby-title"><span id="user-name"></span>이의 짝반짝 놀이방</h1>
+      <h1 id="lobby-title"><span id="user-name"></span> 반짝반짝 놀이방</h1>
       <p id="lobby-subtitle">하고 싶은 놀이 카드를 꾹 눌러보세요!</p>
     </header>
 
@@ -235,7 +235,7 @@
 
     // 2. 이름이 있으면 화면에 출력하기
     if (userName) {
-        document.getElementById('user-name').innerText = decodeURIComponent(userName);
+        document.getElementById('user-name').innerText = decodeURIComponent(userName) + "이의";
     }
   </script>
 

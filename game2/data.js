@@ -8,7 +8,7 @@ const gameStagePool = [
         leftSide: [
             { id: "L1", matchId: "RED", label: "소방차", lottie: "firetruck.json", lottie_black: "firetruck_black.json" },
             { id: "L2", matchId: "YELLOW", label: "유치원 버스", lottie: "bus.json", lottie_black: "bus_black.json" },
-            { id: "L3", matchId: "BLUE", label: "경찰차", lottie: "police.json", lottie_black: "police_black.json" }
+            { id: "L3", matchId: "BLUE", label: "경찰차", lottie: "police1.json", lottie_black: "police1_black.json" }
         ],
         rightSide: [
             { id: "R1", matchId: "YELLOW", label: "노랑", color: "#facc15" },
