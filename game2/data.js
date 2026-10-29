@@ -41,9 +41,9 @@ const gameStagePool = [
             { id: "L3", matchId: "EMERALD", label: "거북이", lottie: "turtle.json", lottie_black: "turtle_black.json" }
         ],
         rightSide: [
-            { id: "R1", matchId: "CORAL", label: "산호색", color: "#fb7185" },
-            { id: "R2", matchId: "EMERALD", label: "청록색", color: "#0d9488" },
-            { id: "R3", matchId: "NAVY", label: "남색", color: "#1e3a8a" }
+            { id: "R1", matchId: "CORAL", label: "빨강", color: "#fb7185" },
+            { id: "R2", matchId: "EMERALD", label: "초록", color: "#0d9488" },
+            { id: "R3", matchId: "NAVY", label: "파랑", color: "#1e3a8a" }
         ]
     },
 ];
