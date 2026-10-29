@@ -264,6 +264,21 @@
         .modal-btn:active {
             background-color: #059669;
         }
+        #back-btn {
+      position: absolute;
+      top: 2.5vh;
+      left: 2vw;
+      padding: 8px 18px;
+      font-size: 16px;
+      font-weight: bold;
+      background-color: #ffffff;
+      border: 3px solid #e8eaed;
+      border-radius: 20px;
+      cursor: pointer;
+      color: #5f6368;
+      z-index: 15;
+      text-decoration:none;
+    }
     </style>
 
     <script src="../js/jquery-3.3.1.min.js"></script>
@@ -273,6 +288,8 @@
 <body>
 
     <div class="app-wrapper">
+        <a id="back-btn" href="../index.html">◀ 처음으로</a>
+
         <!-- ⭕ [시작 화면 인트로 가이드] 처음 접속 시 활성화되는 레이어 -->
         <div class="intro-overlay" id="intro-screen">
             <h2 class="intro-title">알록달록 색상 매칭</h2>
